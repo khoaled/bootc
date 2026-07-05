@@ -1,0 +1,15 @@
+---
+
+- name: Pull Fedora image from {{ url }}
+  hosts: localhost
+  become: yes
+
+  vars:
+    url: "quay.io"
+    #registry_user: "khoaled"
+    #registry_password: "MXvkQm2dx5YnSx4"
+
+  tasks:
+    - name: Pull Fedora 44 container
+      containers.podman.podman_image:
+        name: "{{ url }}/fedora/fedora-bootc:44"
