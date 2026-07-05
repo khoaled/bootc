@@ -1,0 +1,25 @@
+---
+
+- name: Pull images from {{ url }}
+  hosts: localhost
+  become: yes
+
+  vars:
+    url: "registry.redhat.io"
+    registry_user:
+    registry_password:
+
+  tasks:
+    - name: Log into {{ url }}
+      containers.podman.podman_login:
+        registry: "{{ url }}"
+        username: "{{ registry_user }}"
+        password: "{{ registry_password }}"
+
+    - name: Pull Redhat 9 container
+      containers.podman.podman_image:
+        name: "{{ url }}/rhel9/rhel-bootc:latest"
+
+    - name: Pull Redhat 10 container
+      containers.podman.podman_image:
+        name: "{{ url }}/rhel10/rhel-bootc:latest"
