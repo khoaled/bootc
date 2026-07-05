@@ -1,0 +1,50 @@
+---
+
+- name: Create and Push images to {{ registry_url }}
+  hosts: localhost
+  become: yes
+
+  vars:
+    registry_url: 
+    registry_user: 
+    registry_password:
+
+  tasks:
+    - name: Login to {{ registry_url }}
+      containers.podman.podman_login:
+        registry: "{{ registry_url }}"
+        username: "{{ registry_user }}"
+        password: "{{ registry_password }}"
+
+    - name: Build and Push Fedora 44 laptop container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/fedora/laptop-44:latest
+        path: /srv/bootable/fedora/
+        build:
+          cache: no
+          force_rm: true
+          file: Containerfile.laptop
+        push: true
+        state: build
+
+    - name: Build and Push Fedora 44 desktop container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/fedora/44:latest
+        path: /srv/bootable/fedora/
+        build:
+          cache: false
+          force_rm: true
+          file: Containerfile.desktop
+        push: true
+        state: build
+
+    - name: Remove Fedora 44 laptop container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/fedora/latop-44:latest
+        state: absent
+
+    - name: Remove Fedora 44 desktop container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/fedora/44:latest
+        state: absent
+
