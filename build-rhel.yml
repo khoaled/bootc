@@ -1,0 +1,47 @@
+---
+
+- name: Create and Push images to {{ registry_url }}
+  hosts: localhost
+  become: yes
+
+  vars:
+    registry_url: 
+    registry_user: 
+    registry_password:
+
+  tasks:
+    - name: Login to {{ registry_url }}
+      containers.podman.podman_login:
+        registry: "{{ registry_url }}"
+        username: "{{ registry_user }}"
+        password: "{{ registry_password }}"
+
+    - name: Build and Push Redhat 9 container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/rhel/9:latest
+        path: /srv/bootable/rhel9
+        build:
+          cache: false
+          force_rm: true
+        push: true
+        state: build
+
+    - name: Build and Push Redhat 10 container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/rhel/10:latest
+        path: /srv/bootable/rhel10
+        build:
+          cache: false
+          force_rm: true
+        push: true
+        state: build
+
+    - name: Remove Redhat 9 container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/rhel/9:latest
+        state: absent
+
+    - name: Remove Redhat 10 container
+      containers.podman.podman_image:
+        name: registry.home.dorkyninja.com/rhel/10:latest
+        state: absent
