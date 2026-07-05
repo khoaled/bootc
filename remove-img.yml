@@ -1,0 +1,12 @@
+---
+
+- name: Remove all container images
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Remove all containers
+      containers.podman.podman_prune:
+        system: true
+        system_all: true
+        system_volumes: true
